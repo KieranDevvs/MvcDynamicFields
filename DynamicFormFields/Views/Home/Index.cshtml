@@ -1,0 +1,45 @@
+﻿@model DynamicFormFields.Models.ItemForm
+
+<br/>
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+    <text>Provider: </text> @Html.DropDownListFor(x => x.SelectedItemId, Model.ItemNames)
+
+    <span id="dynamicFields">
+
+        @{
+            await Html.RenderPartialAsync("_DynamicFields", Model.ExtraFields);
+        }
+    </span>
+
+    <button type="submit">Post</button>
+}
+
+<script>
+    var select = document.querySelector('#SelectedItemId');
+
+    select.addEventListener('change',function() {
+        var xmlHttp = new XMLHttpRequest();
+        var url = "@Url.Action("GetFieldsForProvider", "Home")";
+
+        xmlHttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                console.log(this.responseText);
+                document.querySelector('#dynamicFields').innerHTML = this.responseText;
+            }
+        };
+        xmlHttp.open("GET", url + formatParams({itemId: this.value, nodePrefix: "ExtraFields"}), true);
+        xmlHttp.send();
+    });
+
+    function formatParams( params ) {
+        return "?" +
+            Object
+            .keys(params)
+            .map(function(key) {
+                return key + "=" + encodeURIComponent(params[key]);
+            })
+            .join("&");
+    }
+</script>

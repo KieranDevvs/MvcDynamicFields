@@ -1,0 +1,9 @@
+﻿@model DynamicFormFields.Models.DynamicField
+
+<br/><br/>
+<text>@Model.DisplayName</text>:
+@Html.TextBoxFor(x => x.Value)
+@Html.HiddenFor(x => x.Id)
+@Html.HiddenFor(x => x.IsRequired)
+
+<br/><br/>
